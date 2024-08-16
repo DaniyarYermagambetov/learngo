@@ -32,7 +32,10 @@ func main() {
 	})
 
 	fmt.Println("Listening on port 8080")
-	http.ListenAndServe(":8080", mux)
+	err := http.ListenAndServe(":8080", mux)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request, storage *MemStorage) {
@@ -79,7 +82,7 @@ func handlePost(w http.ResponseWriter, r *http.Request, storage *MemStorage) {
 			w.WriteHeader(http.StatusOK)
 		}
 	default:
-		err = fmt.Errorf("Invalid metric type")
+		err = fmt.Errorf("invalid metric type")
 	}
 
 	if err != nil {
