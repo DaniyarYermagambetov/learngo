@@ -66,26 +66,26 @@ func handlePost(w http.ResponseWriter, r *http.Request, storage *MemStorage) {
 	case "gauge":
 		var value float64
 		value, err = strconv.ParseFloat(metricValue, 64)
-		if err == nil {
-			storage.mu.Lock()
-			storage.gauges[metricName] = value
-			storage.mu.Unlock()
-			w.WriteHeader(http.StatusOK)
+		if err != nil {
+			http.Error(w, "Invalid gauge value", http.StatusBadRequest)
+			return
 		}
+		storage.mu.Lock()
+		storage.gauges[metricName] = value
+		storage.mu.Unlock()
+		w.WriteHeader(http.StatusOK)
 	case "counter":
 		var value int64
 		value, err = strconv.ParseInt(metricValue, 10, 64)
-		if err == nil {
-			storage.mu.Lock()
-			storage.counters[metricName] += value
-			storage.mu.Unlock()
-			w.WriteHeader(http.StatusOK)
+		if err != nil {
+			http.Error(w, "Invalid counter value", http.StatusBadRequest)
+			return
 		}
+		storage.mu.Lock()
+		storage.counters[metricName] += value
+		storage.mu.Unlock()
+		w.WriteHeader(http.StatusOK)
 	default:
-		err = fmt.Errorf("invalid metric type")
-	}
-
-	if err != nil {
-		http.Error(w, "Invalid metric value", http.StatusBadRequest)
+		http.Error(w, "Invalid metric type", http.StatusBadRequest)
 	}
 }
