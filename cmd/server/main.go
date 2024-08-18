@@ -64,16 +64,12 @@ func (s *GaugeStorage) SetGauge(name string, value float64) {
 func (s *CounterStorage) AddCounter(name string, value int64) {
 	s.Lock()
 	defer s.Unlock()
-	if _, exists := s.data[name]; exists {
-		s.data[name] += value
-	} else {
-		s.data[name] = value
-	}
+	s.data[name] += value
 }
 
 // GetGauge возвращает значение метрики типа gauge
 func (s *GaugeStorage) GetGauge(name string) (float64, bool) {
-	s.Lock()
+	s.RLock()
 	defer s.RUnlock()
 	value, exists := s.data[name]
 	return value, exists
@@ -81,7 +77,7 @@ func (s *GaugeStorage) GetGauge(name string) (float64, bool) {
 
 // GetCounter возвращает значение метрики типа counter
 func (s *CounterStorage) GetCounter(name string) (int64, bool) {
-	s.Lock()
+	s.RLock()
 	defer s.RUnlock()
 	value, exists := s.data[name]
 	return value, exists
