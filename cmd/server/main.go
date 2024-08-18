@@ -73,7 +73,7 @@ func (s *CounterStorage) AddCounter(name string, value int64) {
 
 // GetGauge возвращает значение метрики типа gauge
 func (s *GaugeStorage) GetGauge(name string) (float64, bool) {
-	s.RLock()
+	s.Lock()
 	defer s.RUnlock()
 	value, exists := s.data[name]
 	return value, exists
@@ -81,7 +81,7 @@ func (s *GaugeStorage) GetGauge(name string) (float64, bool) {
 
 // GetCounter возвращает значение метрики типа counter
 func (s *CounterStorage) GetCounter(name string) (int64, bool) {
-	s.RLock()
+	s.Lock()
 	defer s.RUnlock()
 	value, exists := s.data[name]
 	return value, exists
